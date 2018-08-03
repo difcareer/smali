@@ -100,7 +100,15 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
         // large values may be used for the index delta, which cause the cumulative index to overflow upon
         // addition, effectively allowing out of order entries.
         int methodIndexDiff = reader.readLargeUleb128();
-        this.methodIndex = methodIndexDiff + previousMethodIndex;
+
+        //patch for bangbang
+        int realIndex = methodIndexDiff + previousMethodIndex;
+        if (realIndex >= dexFile.getMethodCount()) {
+            this.methodIndex = methodIndexDiff;
+        } else {
+            this.methodIndex = realIndex;
+        }
+
         this.accessFlags = reader.readSmallUleb128();
         this.codeOffset = reader.readSmallUleb128();
 

@@ -71,7 +71,14 @@ public class DexBackedField extends BaseFieldReference implements Field {
         // addition, effectively allowing out of order entries.
         startOffset = reader.getOffset();
         int fieldIndexDiff = reader.readLargeUleb128();
-        this.fieldIndex = fieldIndexDiff + previousFieldIndex;
+
+        //patch for bangbang
+        if (fieldIndexDiff > previousFieldIndex) {
+            this.fieldIndex = fieldIndexDiff;
+        } else {
+            this.fieldIndex = fieldIndexDiff + previousFieldIndex;
+        }
+
         this.accessFlags = reader.readSmallUleb128();
 
         this.annotationSetOffset = annotationIterator.seekTo(fieldIndex);
@@ -92,11 +99,10 @@ public class DexBackedField extends BaseFieldReference implements Field {
         int fieldIndexDiff = reader.readLargeUleb128();
 
         //patch for bangbang
-        int realIndex = fieldIndexDiff + previousFieldIndex;
-        if (realIndex >= dexFile.getFieldCount()) {
+        if (fieldIndexDiff > previousFieldIndex) {
             this.fieldIndex = fieldIndexDiff;
         } else {
-            this.fieldIndex = realIndex;
+            this.fieldIndex = fieldIndexDiff + previousFieldIndex;
         }
 
         this.accessFlags = reader.readSmallUleb128();

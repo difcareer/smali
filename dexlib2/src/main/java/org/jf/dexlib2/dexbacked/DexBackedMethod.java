@@ -102,11 +102,10 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
         int methodIndexDiff = reader.readLargeUleb128();
 
         //patch for bangbang
-        int realIndex = methodIndexDiff + previousMethodIndex;
-        if (realIndex >= dexFile.getMethodCount()) {
+        if (methodIndexDiff > previousMethodIndex) {
             this.methodIndex = methodIndexDiff;
         } else {
-            this.methodIndex = realIndex;
+            this.methodIndex = methodIndexDiff + previousMethodIndex;
         }
 
         this.accessFlags = reader.readSmallUleb128();

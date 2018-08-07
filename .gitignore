@@ -11,3 +11,4 @@
 *.iws
 .idea
 local.properties
+out
